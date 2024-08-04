@@ -19,6 +19,7 @@ Dictionary<VariableList<int>, Func<List<int>, bool>> constraints = new();
     {0, 0, 0,  0, 0, 0,  0, 0, 0 },
 };*/
 
+
 var board = new int[,]
 {
     {0, 0, 0,  2, 0, 0,  0, 9, 0 },
