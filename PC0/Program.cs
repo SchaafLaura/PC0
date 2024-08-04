@@ -21,17 +21,17 @@ Dictionary<VariableList<int>, Func<List<int>, bool>> constraints = new();
 
 var board = new int[,]
 {
-    {0, 0, 0,  0, 0, 0,  0, 0, 0 },
-    {0, 0, 1,  0, 0, 2,  0, 0, 3 },
-    {5, 0, 0,  0, 0, 7,  0, 8, 0 },
+    {0, 0, 0,  2, 0, 0,  0, 9, 0 },
+    {9, 0, 3,  0, 6, 0,  2, 0, 7 },
+    {0, 5, 4,  0, 0, 0,  8, 0, 0 },
 
-    {8, 0, 0,  0, 0, 3,  0, 0, 7 },
-    {0, 5, 0,  7, 0, 6,  0, 0, 1 },
-    {4, 0, 0,  0, 0, 0,  0, 0, 6 },
+    {4, 7, 0,  0, 0, 0,  0, 1, 0 },
+    {0, 0, 2,  4, 0, 7,  0, 0, 0 },
+    {5, 0, 0,  9, 0, 2,  0, 7, 0 },
 
-    {0, 0, 0,  4, 6, 0,  0, 0, 0 },
-    {2, 0, 0,  0, 0, 5,  0, 9, 0 },
-    {0, 4, 0,  0, 2, 0,  0, 3, 0 },
+    {0, 4, 0,  0, 0, 9,  7, 0, 0 },
+    {0, 0, 1,  0, 0, 0,  5, 0, 0 },
+    {0, 2, 6,  0, 5, 0,  0, 0, 0 },
 };
 
 for (int x = 0; x < 9; x++)
@@ -57,9 +57,13 @@ for (int i = 0; i < 9; i++)
         var columnKey = new VariableList<int>(column);
         var boxKey = new VariableList<int>(box);
 
-        constraints.Add(rowKey, MutuallyExclusiveConstraints());
-        constraints.Add(columnKey, MutuallyExclusiveConstraints());
-        constraints.Add(boxKey, MutuallyExclusiveConstraints());
+        /*constraints.Add(rowKey, MutuallyExclusiveConstraint());
+        constraints.Add(columnKey, MutuallyExclusiveConstraint());
+        constraints.Add(boxKey, MutuallyExclusiveConstraint());*/
+        constraints.Add(rowKey, ContainsAllConstraint());
+        constraints.Add(columnKey, ContainsAllConstraint());
+        constraints.Add(boxKey, ContainsAllConstraint());
+
 
         row = row.RotateThrough();
         column = column.RotateThrough();
@@ -68,6 +72,7 @@ for (int i = 0; i < 9; i++)
 }
 
 var solver = new Solver<int>(domains, unaryConstraints, constraints);
+solver.Solve();
 solver.Solve();
 ;
 
@@ -144,7 +149,20 @@ VariableList<int> GetRow(int y)
     return ret;
 }
 
-Func<List<int>, bool> MutuallyExclusiveConstraints()
+
+
+Func<List<int>, bool> ContainsAllConstraint()
+{
+    return (list) =>
+    {
+        for (int i = 1; i <= 9; i++)
+            if (!list.Contains(i))
+                return false;
+        return true;
+    };
+}
+
+Func<List<int>, bool> MutuallyExclusiveConstraint()
 {
     return (list) =>
     {
